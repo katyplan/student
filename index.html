@@ -1,0 +1,2191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KatyPlan - Balanced homework, every day.</title>
+    <meta name="description" content="Paste your assignments and get a fair daily plan in seconds. No login required.">
+   
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+   
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <link href="https://unpkg.com/splitting@1.0.6/dist/splitting.css" rel="stylesheet">
+    <script src="https://unpkg.com/splitting@1.0.6/dist/splitting.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+   
+    <!-- Custom Styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+       
+        :root {
+            --primary-blue: #4A90E2;
+            --secondary-green: #7ED321;
+            --warning-amber: #F5A623;
+            --error-coral: #D0021B;
+            --bg-off-white: #FAFAFA;
+            --text-charcoal: #2C2C2C;
+        }
+       
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+       
+        body {
+            background-color: var(--bg-off-white);
+            color: var(--text-charcoal);
+        }
+       
+        .hero-bg {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.05) 0%, rgba(126, 211, 33, 0.05) 100%);
+        }
+       
+        .card-shadow {
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+       
+        .btn-primary {
+            background: var(--primary-blue);
+            transition: all 0.2s ease;
+        }
+       
+        .btn-primary:hover {
+            background: #3A7BC8;
+            transform: translateY(-1px);
+        }
+       
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+       
+        .btn-primary:disabled {
+            background: #a0c4e9;
+            cursor: not-allowed;
+            transform: none;
+        }
+       
+        .workload-green {
+            background: var(--secondary-green);
+            color: white;
+        }
+       
+        .workload-amber {
+            background: var(--warning-amber);
+            color: white;
+        }
+       
+        .workload-red {
+            background: var(--error-coral);
+            color: white;
+        }
+       
+        .day-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary-blue);
+        }
+       
+        .day-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+        }
+       
+        .toggle-btn {
+            transition: all 0.2s ease;
+        }
+       
+        .toggle-btn.active {
+            background: var(--primary-blue);
+            color: white;
+        }
+       
+        .toggle-btn.inactive {
+            background: #f3f4f6;
+            color: #9ca3af;
+            border-color: #e5e7eb;
+        }
+       
+        .particle-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+       
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+       
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.6s ease;
+        }
+       
+        .loading-spinner {
+            border: 3px solid rgba(74, 144, 226, 0.3);
+            border-top: 3px solid var(--primary-blue);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+       
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+       
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+       
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+       
+        .success-pulse {
+            animation: pulse 0.6s ease-in-out;
+        }
+       
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Study Resources Styles */
+        .nav-link {
+            position: relative;
+            padding-bottom: 2px;
+            transition: color 0.2s ease;
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-blue);
+            border-radius: 1px;
+        }
+        .nav-link:hover {
+            color: var(--primary-blue);
+        }
+        .resource-card {
+            transition: all 0.2s ease;
+        }
+        .resource-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .search-input {
+            transition: all 0.2s ease;
+        }
+        .search-input:focus {
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+        .resource-category {
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        .resource-category:first-child {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+        }
+       
+        /* Career Quiz Styles */
+        .answer-btn {
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+        .answer-btn:hover {
+            border-color: var(--primary-blue);
+            background-color: rgba(74, 144, 226, 0.05);
+        }
+        .answer-btn.selected {
+            background-color: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+        .answer-btn.multi-select {
+            text-align: left;
+            padding-left: 3rem;
+            position: relative;
+        }
+        .answer-btn.multi-select::before {
+            content: '○';
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+        }
+        .answer-btn.multi-select.selected::before {
+            content: '●';
+        }
+        .career-card {
+            border-left: 4px solid var(--secondary-green);
+        }
+        .progress-text {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        .multi-select-hint {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            font-style: italic;
+        }
+
+        /* Career Courses Styles */
+        .path-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+        .path-card:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .path-card.selected {
+            border-color: var(--primary-blue);
+            background-color: rgba(74, 144, 226, 0.05);
+        }
+        .path-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .job-result {
+            transition: all 0.2s ease;
+        }
+        .job-result:hover {
+            background-color: rgba(74, 144, 226, 0.05);
+        }
+        .year-plan-card {
+            border-left: 4px solid var(--secondary-green);
+        }
+        .difficulty-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+        }
+        .difficulty-easy { background: #d1fae5; color: #065f46; }
+        .difficulty-medium { background: #fed7aa; color: #92400e; }
+        .difficulty-hard { background: #fecaca; color: #991b1b; }
+        .prerequisite-note {
+            font-size: 0.75rem;
+            color: #6b7280;
+            font-style: italic;
+        }
+        .semester-block {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <!-- Background Particles -->
+    <div id="particles" class="particle-bg"></div>
+   
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-gray-100">
+        <div class="max-w-6xl mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="text-xl font-bold text-gray-800">
+                    <span class="text-blue-500">Katy</span>Plan
+                </div>
+                <div class="flex items-center gap-6">
+                    <button id="plannerNav" class="nav-link text-gray-700 hover:text-blue-500 font-medium active">Katy Plan</button>
+                    <button id="resourcesNav" class="nav-link text-gray-700 hover:text-blue-500 font-medium">Study Resources</button>
+                    <button id="careerNav" class="nav-link text-gray-700 hover:text-blue-500 font-medium">Find Your Career</button>
+                    <button id="careerCoursesNav" class="nav-link text-gray-700 hover:text-blue-500 font-medium">Career Courses</button>
+                    <button id="howItWorksBtn" class="text-sm text-gray-600 hover:text-blue-500 transition-colors">How it works</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+   
+    <!-- Hero Section -->
+    <section class="hero-bg py-12">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                <span class="text-blue-500">Katy</span>Plan
+            </h1>
+            <div class="text-lg md:text-xl text-gray-600 mb-2">
+                <span id="typed-tagline"></span>
+            </div>
+            <p class="text-sm text-gray-500">No login. Nothing saved. Just better planning.</p>
+        </div>
+    </section>
+   
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-8" id="plannerSection">
+        <!-- Input Section -->
+        <section id="inputSection" class="mb-12 fade-in-up">
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <h2 class="text-2xl font-semibold mb-4">Paste Your Assignments</h2>
+                <p class="text-gray-600 mb-4">One assignment per line. Include the class, description, and due date.</p>
+                <div class="mt-4">
+                    <div class="hidden md:grid grid-cols-12 gap-3 text-xs font-semibold text-gray-500 px-2 mb-2">
+                        <div class="col-span-2">Class</div>
+                        <div class="col-span-5">Description</div>
+                        <div class="col-span-2">Due date</div>
+                        <div class="col-span-3">Notes (optional)</div>
+                    </div>
+                    <div id="assignmentRows" class="space-y-3"></div>
+                    <div class="mt-3 flex flex-wrap gap-3 items-center">
+                        <button id="addRowBtn" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                            + Add assignment
+                        </button>
+                        <div id="inputValidation" class="text-sm hidden"></div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3 mt-4">
+                    <button id="generateBtn" class="btn-primary text-white px-6 py-2 rounded-lg font-medium">Generate Plan</button>
+                    <button id="clearBtn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">Clear</button>
+                    <button id="loadExampleBtn" class="text-blue-500 hover:text-blue-600 text-sm underline">Load Example</button>
+                </div>
+            </div>
+        </section>
+       
+        <!-- Missing Info Section -->
+        <section id="missingInfoSection" class="mb-8 fade-in-up hidden">
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                <h3 class="font-semibold text-amber-800 mb-3">Missing Due Dates</h3>
+                <div id="missingInfoList" class="space-y-2"></div>
+            </div>
+        </section>
+
+        <!-- Extracurriculars Section -->
+        <section id="extracurricularSection" class="mb-12 fade-in-up">
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <h2 class="text-2xl font-semibold mb-2">Extracurriculars (optional)</h2>
+                <p class="text-gray-600 mb-4">Add activities that reduce your available study time for that day.</p>
+                <div class="mt-4">
+                    <div class="hidden md:grid grid-cols-12 gap-3 text-xs font-semibold text-gray-500 px-2 mb-2">
+                        <div class="col-span-4">Activity</div>
+                        <div class="col-span-2">Date</div>
+                        <div class="col-span-2">Time</div>
+                        <div class="col-span-3">Notes (optional)</div>
+                        <div class="col-span-1"></div>
+                    </div>
+                    <div id="extracurricularRows" class="space-y-3"></div>
+                    <div class="mt-3 flex flex-wrap gap-3 items-center">
+                        <button id="addExtracurricularBtn" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                            + Add extracurricular
+                        </button>
+                        <button id="clearExtracurricularsBtn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">
+                            Clear extracurriculars
+                        </button>
+                    </div>
+                    <div class="mt-2 text-xs text-gray-500">
+                        Tip: In the Time box you can type "60 minutes", "1.5 hours", "90 min", or just "75".
+                    </div>
+                </div>
+            </div>
+        </section>
+       
+        <!-- Settings Section -->
+        <section id="settingsSection" class="mb-12 fade-in-up">
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <h2 class="text-2xl font-semibold mb-4">Plan Settings</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                        <input type="date" id="startDate" class="w-full p-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Daily Workload Limit</label>
+                        <select id="workloadLimit" class="w-full p-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none">
+                            <option value="60">Light (60 minutes)</option>
+                            <option value="90" selected>Normal (90 minutes)</option>
+                            <option value="120">Heavy (120 minutes)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Work Days</label>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="toggle-btn active px-3 py-1 rounded-full text-sm border" data-day="mon">Mon</button>
+                        <button class="toggle-btn active px-3 py-1 rounded-full text-sm border" data-day="tue">Tue</button>
+                        <button class="toggle-btn active px-3 py-1 rounded-full text-sm border" data-day="wed">Wed</button>
+                        <button class="toggle-btn active px-3 py-1 rounded-full text-sm border" data-day="thu">Thu</button>
+                        <button class="toggle-btn active px-3 py-1 rounded-full text-sm border" data-day="fri">Fri</button>
+                        <button class="toggle-btn px-3 py-1 rounded-full text-sm border" data-day="sat">Sat</button>
+                        <button class="toggle-btn px-3 py-1 rounded-full text-sm border" data-day="sun">Sun</button>
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Difficulty Mode</label>
+                    <select id="difficultyMode" class="w-full p-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none">
+                        <option value="simple" selected>Simple (auto-estimate times)</option>
+                        <option value="custom">Custom (edit times manually)</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+       
+        <!-- Output Section -->
+        <section id="outputSection" class="mb-12 fade-in-up hidden">
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-semibold">Your Study Plan</h2>
+                    <div class="flex gap-2">
+                        <button id="copyPlanBtn" class="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-200 transition-colors">Copy</button>
+                        <button id="printPlanBtn" class="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-200 transition-colors">Print</button>
+                        <button id="regenerateBtn" class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm hover:bg-blue-200 transition-colors">Regenerate</button>
+                    </div>
+                </div>
+                <div id="summaryStrip" class="bg-gray-50 rounded-lg p-4 mb-6">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div>
+                            <div class="text-2xl font-bold text-blue-500" id="totalAssignments">0</div>
+                            <div class="text-sm text-gray-600">Assignments</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-green-500" id="totalDays">0</div>
+                            <div class="text-sm text-gray-600">Plan Days</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-amber-500" id="totalMinutes">0</div>
+                            <div class="text-sm text-gray-600">Total Minutes</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-600">Busiest Day</div>
+                            <div class="font-semibold" id="busiestDay">-</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="warningMessage" class="hidden bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                    <p class="text-red-800 text-sm">
+                        <strong>Workload Warning:</strong> Your schedule is overloaded. Consider enabling weekends, raising your daily limit, or starting earlier.
+                    </p>
+                </div>
+                <div id="scheduleDays" class="space-y-4"></div>
+            </div>
+        </section>
+       
+        <!-- How It Works Section -->
+        <section id="howItWorksSection" class="mb-12 fade-in-up">
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <h2 class="text-2xl font-semibold mb-4">How It Works</h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-blue-500 font-bold">1</span>
+                        </div>
+                        <h3 class="font-semibold mb-2">Paste Assignments</h3>
+                        <p class="text-gray-600 text-sm">Copy and paste your assignment list from any source. Our parser understands natural language.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-green-500 font-bold">2</span>
+                        </div>
+                        <h3 class="font-semibold mb-2">Smart Scheduling</h3>
+                        <p class="text-gray-600 text-sm">Our algorithm spreads work across available days, splitting large tasks and balancing your workload.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-amber-500 font-bold">3</span>
+                        </div>
+                        <h3 class="font-semibold mb-2">Follow Your Plan</h3>
+                        <p class="text-gray-600 text-sm">Get a clear day-by-day breakdown. Check off tasks as you complete them and stay on track.</p>
+                    </div>
+                </div>
+                <div class="mt-8 p-4 bg-blue-50 rounded-lg">
+                    <h3 class="font-semibold text-blue-800 mb-2">Tips for Best Results</h3>
+                    <ul class="text-sm text-blue-700 space-y-1">
+                        <li>• Include class names and clear due dates</li>
+                        <li>• Mention assignment types (quiz, essay, project) for better time estimates</li>
+                        <li>• Set realistic daily limits based on your actual availability</li>
+                        <li>• Enable weekend work if you have heavy weeks</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Study Resources Section -->
+    <main id="resourcesSection" class="max-w-6xl mx-auto px-4 py-8 hidden">
+        <!-- Search Bar -->
+        <div class="mb-8 fade-in-up">
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <div class="flex items-center gap-4">
+                    <input 
+                        type="text" 
+                        id="resourceSearch" 
+                        placeholder="Search AP courses (e.g., AP World History, AP Calculus BC, AP Physics C)..."
+                        class="search-input flex-1 p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                    >
+                    <button id="searchBtn" class="btn-primary text-white px-6 py-3 rounded-lg font-medium">
+                        Search
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- AP Resources Grid -->
+        <div id="resourcesGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 fade-in-up">
+            
+            <!-- AP African American Studies -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="African American Studies">
+                <h3 class="text-xl font-semibold mb-2">AP African American Studies</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-african-american-studies" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Framework</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Essential Resources</h4>
+                        <div class="text-sm text-gray-600">
+                            • <a href="https://www.pbslearningmedia.org/collection/african-american-studies/" target="_blank" class="text-blue-500 hover:underline">PBS Learning Media Collection</a><br>
+                            • National Museum of African American History<br>
+                            • The 1619 Project (Pulitzer Center)<br>
+                            • AP African American Studies Discord Community
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Primary Sources</h4>
+                        <div class="text-sm text-gray-600">
+                            • Library of Congress - African American Perspectives<br>
+                            • Facing History & Ourselves - Teaching Resources<br>
+                            • Zinn Education Project - People's History
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Art History -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Art History">
+                <h3 class="text-xl font-semibold mb-2">AP Art History</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Khan Academy</h4>
+                        <a href="https://www.khanacademy.org/humanities/art-history" target="_blank" class="text-sm text-blue-500 hover:underline">Complete Art History Course</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-art-history" target="_blank">Official Course & 250 Required Works</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Visual Resources</h4>
+                        <div class="text-sm text-gray-600">
+                            • Smarthistory - Video Library & Essays<br>
+                            • Google Arts & Culture - High-Res Images<br>
+                            • AP Art History Quizlet - 250 Images Flashcards<br>
+                            • Met Museum Heilbrunn Timeline
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Study Guides</h4>
+                        <div class="text-sm text-gray-600">
+                            • Gardner's Art Through Ages (Companion)<br>
+                            • Barron's AP Art History Book<br>
+                            • AP Art History Ning Community
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Biology -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Biology">
+                <h3 class="text-xl font-semibold mb-2">AP Biology</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Khan Academy</h4>
+                        <a href="https://www.khanacademy.org/science/ap-biology" target="_blank" class="text-sm text-blue-500 hover:underline">Full AP Biology Course</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-biology" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Lab Manual</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Video Lectures</h4>
+                        <div class="text-sm text-gray-600">
+                            • Bozeman Science - AP Biology Playlist<br>
+                            • Amoeba Sisters - General Biology<br>
+                            • MIT OpenCourseWare - Biology Lectures<br>
+                            • AP Biology Discord Study Server
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Practice & Labs</h4>
+                        <div class="text-sm text-gray-600">
+                            • Biology Corner - Free Labs & Worksheets<br>
+                            • Albert.io - AP Biology Practice<br>
+                            • Fiveable - Study Guides & Crams<br>
+                            • Clutch Prep - Video Explanations<br>
+                            • Campbell Biology (Textbook Companion)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Calculus AB -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Calculus AB">
+                <h3 class="text-xl font-semibold mb-2">AP Calculus AB</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Khan Academy</h4>
+                        <a href="https://www.khanacademy.org/math/ap-calculus-ab" target="_blank" class="text-sm text-blue-500 hover:underline">Complete Calculus AB Course</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-calculus-ab" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & FRQ Practice</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Problem Solving</h4>
+                        <div class="text-sm text-gray-600">
+                            • Professor Leonard - Full Lectures<br>
+                            • PatrickJMT - Problem Walkthroughs<br>
+                            • The Organic Chemistry Tutor - AP Calc Review<br>
+                            • Calcworkshop - Paid but Comprehensive<br>
+                            • Symbolab - Step-by-Step Solutions
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Practice Tools</h4>
+                        <div class="text-sm text-gray-600">
+                            • WolframAlpha - Problem Solver<br>
+                            • Flipped Math - Worksheets<br>
+                            • Marco Learning - Practice Exams<br>
+                            • Barron's AP Calculus Book
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Calculus BC -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Calculus BC">
+                <h3 class="text-xl font-semibold mb-2">AP Calculus BC</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Khan Academy</h4>
+                        <a href="https://www.khanacademy.org/math/ap-calculus-bc" target="_blank" class="text-sm text-blue-500 hover:underline">Complete Calculus BC Course</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-calculus-bc" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Practice</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">BC-Specific Resources</h4>
+                        <div class="text-sm text-gray-600">
+                            • Paul's Online Math Notes - Calc II & III<br>
+                            • 3Blue1Brown - Essence of Calculus<br>
+                            • MIT OCW - Single Variable Calculus<br>
+                            • Calc BC Discord Community
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Advanced Practice</h4>
+                        <div class="text-sm text-gray-600">
+                            • Varsity Tutors - Free BC Practice Tests<br>
+                            • Study.com - BC Practice Questions<br>
+                            • Previous FRQs (College Board)<br>
+                            • Barron's AP Calculus BC Book
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Chemistry -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Chemistry">
+                <h3 class="text-xl font-semibold mb-2">AP Chemistry</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Khan Academy</h4>
+                        <a href="https://www.khanacademy.org/science/chemistry" target="_blank" class="text-sm text-blue-500 hover:underline">Chemistry Course (General)</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-chemistry" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Lab Manual</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Video Explanations</h4>
+                        <div class="text-sm text-gray-600">
+                            • Tyler DeWitt - Chemistry Explained<br>
+                            • The Organic Chemistry Tutor - AP Chem<br>
+                            • Professor Dave Explains - Chemistry<br>
+                            • ChemCollective - Virtual Labs
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Practice & Community</h4>
+                        <div class="text-sm text-gray-600">
+                            • AP Chemistry Discord Server<br>
+                            • Albert.io - AP Chem Practice<br>
+                            • Fiveable - Study Guides & Crams<br>
+                            • ChemGuide - UK Resource (Excellent)<br>
+                            • Zumdahl Chemistry (Textbook Companion)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Chinese Language -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Chinese Language">
+                <h3 class="text-xl font-semibold mb-2">AP Chinese Language & Culture</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-chinese-language-and-culture" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Exam Info</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Language Platforms</h4>
+                        <div class="text-sm text-gray-600">
+                            • Duolingo Chinese - Free Practice<br>
+                            • HelloChinese - Interactive Lessons<br>
+                            • Yoyo Chinese - Structured Courses<br>
+                            • ChinesePod - Audio Lessons<br>
+                            • Skritter - Character Writing
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Culture & Media</h4>
+                        <div class="text-sm text-gray-600">
+                            • CCTV Learn Chinese - Authentic Media<br>
+                            • Manga & Anime (Original Language)<br>
+                            • r/ChineseLanguage - Reddit Community<br>
+                            • Discord Chinese Learning Server<br>
+                            • Chinese Drama with Subtitles
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Comparative Government -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Comparative Government">
+                <h3 class="text-xl font-semibold mb-2">AP Comparative Government & Politics</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-comparative-government-and-politics" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Country Profiles</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Country Data</h4>
+                        <div class="text-sm text-gray-600">
+                            • CIA World Factbook - Country Comparisons<br>
+                            • Freedom House - Democracy Reports<br>
+                            • AP Comp Gov Discord Study Group<br>
+                            • Fiveable - Country Chart Compilations
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Current Events</h4>
+                        <div class="text-sm text-gray-600">
+                            • The Economist - Country Briefings<br>
+                            • BBC News - World Politics<br>
+                            • Comparative Government Case Studies<br>
+                            • Georgetown Political Database
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Computer Science A -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Computer Science A">
+                <h3 class="text-xl font-semibold mb-2">AP Computer Science A</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-computer-science-a" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Lab Requirements</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Coding Practice</h4>
+                        <div class="text-sm text-gray-600">
+                            • CodingBat - Java Practice Problems<br>
+                            • LeetCode - Algorithm Practice (Easy)<br>
+                            • HackerRank - Java Domain<br>
+                            • Replit - Online IDE & Collaboration<br>
+                            • CSAwesome - Free Online Textbook
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Learning Platforms</h4>
+                        <div class="text-sm text-gray-600">
+                            • Greenfoot - Java Game Environment<br>
+                            • Princeton Algorithms (Coursera)<br>
+                            • AP CSA Discord Community<br>
+                            • Java for Dummies (Book Reference)
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Video Tutorials</h4>
+                        <div class="text-sm text-gray-600">
+                            • Alex Lee - AP CSA Specific<br>
+                            • Programming with Mosh - Java Masterclass<br>
+                            • Bro Code - Java Programming<br>
+                            • Neil Hampshire - 100 Days of Java
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Computer Science Principles -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Computer Science Principles">
+                <h3 class="text-xl font-semibold mb-2">AP Computer Science Principles</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-computer-science-principles" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Create Task Guide</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Creative Projects</h4>
+                        <div class="text-sm text-gray-600">
+                            • Scratch - Creative Computing<br>
+                            • Code.org - CSP Curriculum<br>
+                            • App Lab - Mobile App Creation<br>
+                            • GitHub - Portfolio Hosting<br>
+                            • MIT App Inventor
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Concept Review</h4>
+                        <div class="text-sm text-gray-600">
+                            • Internet Simulator - Code.org<br>
+                            • Data Privacy & Security Modules<br>
+                            • Global Impact Case Studies<br>
+                            • AP CSP Discord Study Group<br>
+                            • Blown to Bits (Free Book)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Drawing -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Drawing">
+                <h3 class="text-xl font-semibold mb-2">AP Studio Art: Drawing</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-studio-art-drawing" target="_blank" class="text-sm text-blue-500 hover:underline">Official Portfolio Requirements</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Technique & Fundamentals</h4>
+                        <div class="text-sm text-gray-600">
+                            • Proko - Figure Drawing<br>
+                            • New Masters Academy - Classical Techniques<br>
+                            • Sketchbook Skool - Creative Practices<br>
+                            • ArtStation - Professional Inspiration<br>
+                            • Drawing on the Right Side of Brain (Book)
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Portfolio Development</h4>
+                        <div class="text-sm text-gray-600">
+                            • AP Art Teacher Facebook Groups<br>
+                            • Student Art Guide - Sustained Investigation Ideas<br>
+                            • Behance - Digital Portfolio Platform<br>
+                            • Local Life Drawing Classes (Meetup)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP English Language -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="English Language">
+                <h3 class="text-xl font-semibold mb-2">AP English Language & Composition</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-english-language-and-composition" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Rubrics</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Rhetoric & Analysis</h4>
+                        <div class="text-sm text-gray-600">
+                            • Purdue OWL - Rhetorical Analysis Guide<br>
+                            • Stanford Encyclopedia of Philosophy - Rhetoric<br>
+                            • They Say/I Say Templates (Gerald Graff)<br>
+                            • AP Lang Discord - Essay Peer Review
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Practice & Examples</h4>
+                        <div class="text-sm text-gray-600">
+                            • College Board Sample Essays (All Scores)<br>
+                            • Albert.io - Rhetorical Terms Practice<br>
+                            • Fiveable - Argumentation Guides<br>
+                            • The Garden of English - Analysis Videos<br>
+                            • Bedfords/St. Martin's - Argument Resources
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Reading Sources</h4>
+                        <div class="text-sm text-gray-600">
+                            • The Atlantic - Longform Essays<br>
+                            • TED Talks Transcripts - Analysis Practice<br>
+                            • ProCon.org - Debate Topics<br>
+                            • NYT Opinion Section - Current Arguments
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP English Literature -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="English Literature">
+                <h3 class="text-xl font-semibold mb-2">AP English Literature & Composition</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-english-literature-and-composition" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Reading List</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Literary Analysis</h4>
+                        <div class="text-sm text-gray-600">
+                            • Poetry Foundation - Poem Analysis<br>
+                            • Shmoop - In-Depth Lit Guides<br>
+                            • SparkNotes No Fear Shakespeare (Context)<br>
+                            • JSTOR - Academic Articles (Free Account)<br>
+                            • Owl Eyes - Annotated Texts
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Video Discussions</h4>
+                        <div class="text-sm text-gray-600">
+                            • Crash Course Literature - Overview Series<br>
+                            • Thug Notes - Humorous Analysis (Summaries)<br>
+                            • Overly Sarcastic Productions - Trope Talks<br>
+                            • AP Lit Teacher Channels (YouTube)
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Practice Essays</h4>
+                        <div class="text-sm text-gray-600">
+                            • College Board Released FRQs<br>
+                            • LitCharts - Theme Analysis<br>
+                            • AP Lit Discord - Peer Review Group<br>
+                            • How to Read Literature Like a Professor (Book)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Environmental Science -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Environmental Science">
+                <h3 class="text-xl font-semibold mb-2">AP Environmental Science</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-environmental-science" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Lab Requirements</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Real-World Data</h4>
+                        <div class="text-sm text-gray-600">
+                            • EPA Data & Statistics<br>
+                            • NASA Climate Change Evidence<br>
+                            • Gapminder - Global Development<br>
+                            • Our World in Data - Environmental Trends<br>
+                            • NOAA Climate.gov
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Video & Interactive</h4>
+                        <div class="text-sm text-gray-600">
+                            • SciShow - Environmental Science Series<br>
+                            • It's Okay To Be Smart - Earth Science<br>
+                            • PhET Simulations - Environmental Models<br>
+                            • APES Discord - Study Community<br>
+                            • HHMI BioInteractive - Science Films
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Case Studies</h4>
+                        <div class="text-sm text-gray-600">
+                            • World Wildlife Fund - Species Reports<br>
+                            • UN Environment Programme - Reports<br>
+                            • National Geographic - Environmental Issues<br>
+                            • APES Practice Exams (Multiple Sources)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP European History -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="European History">
+                <h3 class="text-xl font-semibold mb-2">AP European History</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-european-history" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & DBQ Rubrics</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Timelines & Documents</h4>
+                        <div class="text-sm text-gray-600">
+                            • TimeMaps - Interactive History Atlas<br>
+                            • Fordham Internet History Sourcebook<br>
+                            • Europeana - Digital Cultural Heritage<br>
+                            • AP Euro Discord - Study Group<br>
+                            • Artstor - Historical Images
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Video Lectures</h4>
+                        <div class="text-sm text-gray-600">
+                            • Tom Richey - AP Euro Specific Videos<br>
+                            • Various European History Documentaries<br>
+                            • Yale Open Courses - Early Modern Europe<br>
+                            • History of the World in 100 Objects (BBC)
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Study Guides</h4>
+                        <div class="text-sm text-gray-600">
+                            • Spielvogel Western Civilization (Companion)<br>
+                            • AP Euro Cram Packets (Multiple Sources)<br>
+                            • Periodization Charts & Timelines
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP French Language -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="French Language">
+                <h3 class="text-xl font-semibold mb-2">AP French Language & Culture</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-french-language-and-culture" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Cultural Themes</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Media & Immersion</h4>
+                        <div class="text-sm text-gray-600">
+                            • TV5Monde - French Media with Subtitles<br>
+                            • RFI Savoirs - News in Simple French<br>
+                            • FrenchPod101 - Cultural Podcasts<br>
+                            • Le Petit Journal - Current Events<br>
+                            • r/French - Reddit Community
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Language Practice</h4>
+                        <div class="text-sm text-gray-600">
+                            • Kwiziq - Grammar Practice<br>
+                            • Anki - French Vocabulary Decks<br>
+                            • Italki - 1-on-1 Tutors<br>
+                            • Tandem - Language Exchange<br>
+                            • Conjuguemos - Verb Drills
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Literature & Film</h4>
+                        <div class="text-sm text-gray-600">
+                            • French Cinema Classics (Criterion)<br>
+                            • Albert Camus & Existentialism Resources<br>
+                            • Le Monde - French Literature Reviews
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP German Language -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="German Language">
+                <h3 class="text-xl font-semibent mb-2">AP German Language & Culture</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-german-language-and-culture" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Cultural Comparison</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">German Media</h4>
+                        <div class="text-sm text-gray-600">
+                            • Tagesschau - German News<br>
+                            • Easy German YouTube - Street Interviews<br>
+                            • Deutsche Welle - Learning German<br>
+                            • r/German - Reddit Community<br>
+                            • German Cinema - Mubi/ criterion Collection
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Language Tools</h4>
+                        <div class="text-sm text-gray-600">
+                            • LingQ - German Content Library<br>
+                            • GermanPod101 - Audio Lessons<br>
+                            • Anki - German Grammar Decks<br>
+                            • WordReference - Dictionary<br>
+                            • Italki - German Tutors
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Literature & Culture</h4>
+                        <div class="text-sm text-gray-600">
+                            • Goethe Institute - Cultural Resources<br>
+                            • German Poetry & Philosophy Resources<br>
+                            • Deutsche Welle - German Literature Podcasts
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Human Geography -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Human Geography">
+                <h3 class="text-xl font-semibold mb-2">AP Human Geography</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Khan Academy</h4>
+                        <a href="https://www.khanacademy.org/humanities/geography" target="_blank" class="text-sm text-blue-500 hover:underline">Geography Course</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-human-geography" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Models/Theories</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Interactive Maps & Data</h4>
+                        <div class="text-sm text-gray-600">
+                            • Gapminder - Global Development Data<br>
+                            • Worldmapper - Thematic Maps<br>
+                            • NASA Earth Observatory - Satellite Images<br>
+                            • ArcGIS Online - Story Maps<br>
+                            • World Population History - Interactive
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Current Events & Cases</h4>
+                        <div class="text-sm text-gray-600">
+                            • Population Reference Bureau - Data<br>
+                            • World Bank Open Data<br>
+                            • UN Human Development Reports<br>
+                            • APHG Discord - Map Sharing & Discussion<br>
+                            • Rubenstein Geography (Textbook Companion)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Italian Language -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Italian Language">
+                <h3 class="text-xl font-semibold mb-2">AP Italian Language & Culture</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-italian-language-and-culture" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Cultural Themes</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Learning Resources</h4>
+                        <div class="text-sm text-gray-600">
+                            • ItalianPod101 - Comprehensive Audio<br>
+                            • News in Slow Italian - Current Events<br>
+                            • Italki - 1-on-1 Tutors<br>
+                            • Anki - Italian Vocabulary Decks<br>
+                            • r/italianlearning - Reddit Community
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Culture & Media</h4>
+                        <div class="text-sm text-gray-600">
+                            • Raiplay - Italian TV & Radio<br>
+                            • Italian Cinema Classics (Criterion)<br>
+                            • Discord Italian Practice Server<br>
+                            • Italian Literature - Project Gutenberg<br>
+                            • La Repubblica - Italian News
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Japanese Language -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Japanese Language">
+                <h3 class="text-xl font-semibold mb-2">AP Japanese Language & Culture</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-japanese-language-and-culture" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Cultural Comparison</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Learning Systems</h4>
+                        <div class="text-sm text-gray-600">
+                            • WaniKani - Kanji Learning<br>
+                            • Bunpro - Grammar Practice<br>
+                            • Cure Dolly - Japanese Grammar Logic<br>
+                            • Anki - Core 2000/6000 Decks<br>
+                            • Genki Textbook - Online Resources
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Media & Culture</h4>
+                        <div class="text-sm text-gray-600">
+                            • NHK World - Easy Japanese News<br>
+                            • Manga & Anime (Original Language)<br>
+                            • r/LearnJapanese - Reddit Community<br>
+                            • Discord Japanese Learning Server<br>
+                            • Japanese Literature - Aozora Bunko
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Practice & Immersion</h4>
+                        <div class="text-sm text-gray-600">
+                            • HelloTalk - Language Exchange<br>
+                            • Refold - Immersion Methods<br>
+                            • JapanesePod101 - Audio Lessons<br>
+                            • Italki - Japanese Tutors
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Latin -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Latin">
+                <h3 class="text-xl font-semibold mb-2">AP Latin</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-latin" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Vergil/Caesar Texts</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Translation Tools</h4>
+                        <div class="text-sm text-gray-600">
+                            • Perseus Digital Library - Texts & Tools<br>
+                            • Whitaker's Words - Dictionary<br>
+                            • Latin Library - Public Domain Texts<br>
+                            • NoDictionaries - Reading Support<br>
+                            • Logeion - Multi-Source Dictionary
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Grammar & Scansion</h4>
+                        <div class="text-sm text-gray-600">
+                            • LatinTutorial YouTube Channel<br>
+                            • Hexameter.co - Scansion Practice<br>
+                            • Andere Seiten - Grammar Drills<br>
+                            • Allen & Greenough Latin Grammar (Online)<br>
+                            • AP Latin Discord Study Group
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Literary Analysis</h4>
+                        <div class="text-sm text-gray-600">
+                            • Vergil & Caesar Commentaries<br>
+                            • Cambridge Latin Course Supplements<br>
+                            • Latin Literature - SparkNotes<br>
+                            • Previous FRQ Analysis (College Board)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Macroeconomics -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Macroeconomics">
+                <h3 class="text-xl font-semibold mb-2">AP Macroeconomics</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Khan Academy</h4>
+                        <a href="https://www.khanacademy.org/economics/macroeconomics" target="_blank" class="text-sm text-blue-500 hover:underline">Macroeconomics Course</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-macroeconomics" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & FRQ Practice</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Economic Data & News</h4>
+                        <div class="text-sm text-gray-600">
+                            • Federal Reserve Economic Data (FRED)<br>
+                            • Bureau of Labor Statistics<br>
+                            • World Bank Open Data<br>
+                            • IMF Economic Outlook<br>
+                            • The Economist - Economic News
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Video Explanations</h4>
+                        <div class="text-sm text-gray-600">
+                            • Jacob Clifford - ACDC Econ (Macro)<br>
+                            • EconplusDal - IB/AP Economics<br>
+                            • Marginal Revolution University<br>
+                            • AP Macro Discord Community<br>
+                            • Milton Friedman Free to Choose (Series)
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Practice & Simulations</h4>
+                        <div class="text-sm text-gray-600">
+                            • EconEdLink - Interactive Activities<br>
+                            • Welker's Wikinomics - AP Macro Resources<br>
+                            • Previous FRQs with Scoring<br>
+                            • AP Macro Exam Prep Books (Princeton Review, Barron's)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Microeconomics -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Microeconomics">
+                <h3 class="text-xl font-semibold mb-2">AP Microeconomics</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Khan Academy</h4>
+                        <a href="https://www.khanacademy.org/economics/microeconomics" target="_blank" class="text-sm text-blue-500 hover:underline">Microeconomics Course</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-microeconomics" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Market Models</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Interactive Tools</h4>
+                        <div class="text-sm text-gray-600">
+                            • EconGraphs - Interactive Diagrams<br>
+                            • PartnerEconomics - Practice Questions<br>
+                            • MicroEconModels - Simulation<br>
+                            • AP Micro Discord Community<br>
+                            • Graphing Practice Tools
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Study Support</h4>
+                        <div class="text-sm text-gray-600">
+                            • Jacob Clifford - ACDC Econ (Micro)<br>
+                            • EconplusDal - Market Structures<br>
+                            • Fiveable - Micro Study Guides<br>
+                            • Previous FRQs with Scoring<br>
+                            • Krugman's Economics (Companion)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Music Theory -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Music Theory">
+                <h3 class="text-xl font-semibold mb-2">AP Music Theory</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-music-theory" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Aural Skills</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Theory Practice</h4>
+                        <div class="text-sm text-gray-600">
+                            • Teoria - Music Theory Exercises<br>
+                            • Musictheory.net - Lessons & Practice<br>
+                            • Auralia - Ear Training Software<br>
+                            • Noteflight - Online Notation Tool<br>
+                            • Tenuto - Theory App
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Analysis & Listening</h4>
+                        <div class="text-sm text-gray-600">
+                            • Spotify - AP Music Theory Playlists<br>
+                            • IMSLP - Free Sheet Music Library<br>
+                            • Music Analysis with Emily YouTube<br>
+                            • AP Music Theory Discord Community<br>
+                            • Music Theory for Dummies (Book)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Physics 1 -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Physics 1">
+                <h3 class="text-xl font-semibold mb-2">AP Physics 1</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-physics-1" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Lab Guide</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Video Lessons</h4>
+                        <div class="text-sm text-gray-600">
+                            • Flipping Physics - AP Physics 1 Specific<br>
+                            • Khan Academy - Physics (Algebra-Based)<br>
+                            • Physics Girl - Concept Demonstrations<br>
+                            • MIT OpenCourseWare - Physics I<br>
+                            • Dan Fullerton - Physics 1 Videos
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Simulations & Labs</h4>
+                        <div class="text-sm text-gray-600">
+                            • PhET Simulations - Physics Interactive<br>
+                            • AP Physics 1 Discord - Problem Solving<br>
+                            • Fiveable - Study Guides & Practice<br>
+                            • Pivot Interactives - Video Labs<br>
+                            • The Physics Classroom - Tutorials
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Practice & Resources</h4>
+                        <div class="text-sm text-gray-600">
+                            • Previous FRQs with Video Solutions<br>
+                            • Barron's AP Physics 1 Book<br>
+                            • Princeton Review - Practice Tests<br>
+                            • Physics 1 Formula Sheet & Notes
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Physics 2 -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Physics 2">
+                <h3 class="text-xl font-semibold mb-2">AP Physics 2</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-physics-2" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Lab Guide</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Specialized Topics</h4>
+                        <div class="text-sm text-gray-600">
+                            • Dan Fullerton - Physics 2 Videos<br>
+                            • Physics Galaxy - Advanced Topics<br>
+                            • Thermodynamics Simulations<br>
+                            • Optics & Waves Interactive Labs<br>
+                            • Modern Physics Demos (PhET)
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Study Support</h4>
+                        <div class="text-sm text-gray-600">
+                            • MIT OpenCourseWare - Physics II<br>
+                            • AP Physics 2 Discord Community<br>
+                            • Fiveable - Physics 2 Study Guides<br>
+                            • Previous FRQs with Solutions<br>
+                            • Princeton Review AP Physics 2
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Physics C: Mechanics -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Physics C Mechanics">
+                <h3 class="text-xl font-semibold mb-2">AP Physics C: Mechanics</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-physics-c-mechanics" target="_blank" class="text-sm text-blue-500 hover:underline">Official Calculus-Based Course</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">University-Level Resources</h4>
+                        <div class="text-sm text-gray-600">
+                            • MIT OpenCourseWare - 8.01 Classical Mechanics<br>
+                            • Walter Lewin Lectures - MIT Physics<br>
+                            • Physics StackExchange - Advanced Q&A<br>
+                            • Flipping Physics - Physics C Specific<br>
+                            • Matter & Interactions (Textbook)
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Problem Solving</h4>
+                        <div class="text-sm text-gray-600">
+                            • Irodov Problems - Classical Mechanics<br>
+                            • AP Physics C Discord - Calc Help<br>
+                            • Previous FRQs with Calculus Solutions<br>
+                            • Fiveable - Mechanics Study Guides<br>
+                            • Princeton Review - Physics C Book
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Physics C: Electricity & Magnetism -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Physics C E&M">
+                <h3 class="text-xl font-semibold mb-2">AP Physics C: E & M</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-physics-c-electricity-and-magnetism" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Lab Requirements</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Advanced Resources</h4>
+                        <div class="text-sm text-gray-600">
+                            • MIT OpenCourseWare - 8.02 Electricity & Magnetism<br>
+                            • Walter Lewin - E&M Lecture Series<br>
+                            • Physics StackExchange - E&M Section<br>
+                            • HyperPhysics - Georgia State (Deep Dive)<br>
+                            • Griffiths Introduction to Electrodynamics (Textbook)
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Visualization & Practice</h4>
+                        <div class="text-sm text-gray-600">
+                            • 3D Electromagnetic Field Simulations<br>
+                            • PhET - Circuit & Magnetism Labs<br>
+                            • AP Physics C E&M Discord<br>
+                            • Previous FRQs (Very Calc Heavy)<br>
+                            • Fiveable - E&M Study Guides
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Precalculus -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Precalculus">
+                <h3 class="text-xl font-semibold mb-2">AP Precalculus</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Khan Academy</h4>
+                        <a href="https://www.khanacademy.org/math/precalculus" target="_blank" class="text-sm text-blue-500 hover:underline">Precalculus Course</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-precalculus" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course (New 2023!)</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Foundation Building</h4>
+                        <div class="text-sm text-gray-600">
+                            • Paul's Online Math Notes - Algebra/Trig<br>
+                            • GeoGebra - Interactive Functions<br>
+                            • Desmos - Graphing Calculator<br>
+                            • PurpleMath - Algebra Resources<br>
+                            • OpenStax Precalculus (Free Textbook)
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">New AP Focus Areas</h4>
+                        <div class="text-sm text-gray-600">
+                            • Functions & Their Rates of Change<br>
+                            • Regression & Data Analysis<br>
+                            • Polar & Parametric Functions<br>
+                            • AP Precalc Discord - New Course Community<br>
+                            • Previous FRQs (limited, new exam)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Psychology -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Psychology">
+                <h3 class="text-xl font-semibold mb-2">AP Psychology</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-psychology" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Research Methods</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Comprehensive Review</h4>
+                        <div class="text-sm text-gray-600">
+                            • Verywell Mind - Psychology Articles<br>
+                            • Simply Psychology - Theory Summaries<br>
+                            • PsychCentral - Disorder Information<br>
+                            • AP Psychology Discord - Flashcard Sharing<br>
+                            • Psychology Today - Current Research
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Video Resources</h4>
+                        <div class="text-sm text-gray-600">
+                            • Mr. Sinn - AP Psych Specific Videos<br>
+                            • The Psych Show - Application Focused<br>
+                            • TED Talks - Psychology Playlist<br>
+                            • Khan Academy - Psychology Course<br>
+                            • SciShow Psych - YouTube Channel
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Study Tools</h4>
+                        <div class="text-sm text-gray-600">
+                            • Quizlet - 1000+ AP Psych Terms<br>
+                            • Brainscape - Smart Flashcards<br>
+                            • Albert.io - Practice Questions<br>
+                            • Fiveable - Study Guides & Crams<br>
+                            • Myer's Psychology (Textbook Companion)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Research -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Research">
+                <h3 class="text-xl font-semibold mb-2">AP Research</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-research" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Academic Paper Guide</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Research Methods</h4>
+                        <div class="text-sm text-gray-600">
+                            • Purdue OWL - Research & Citation<br>
+                            • Khan Academy - Statistics & Probability<br>
+                            • Google Scholar - Source Database<br>
+                            • Zotero - Reference Manager<br>
+                            • ResearchGate - Academic Network
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Project Support</h4>
+                        <div class="text-sm text-gray-600">
+                            • AP Research Teacher Community<br>
+                            • Previous Papers (with permission)<br>
+                            • University Library Access (check locally)<br>
+                            • Research Discord - Peer Support<br>
+                            • Methodology Guides (SAGE)
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Writing & Presentation</h4>
+                        <div class="text-sm text-gray-600">
+                            • They Say/I Say - Academic Writing<br>
+                            • Toastmasters - Presentation Skills<br>
+                            • Canva - Research Poster Design<br>
+                            • Overleaf - LaTeX Paper Writing
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Seminar -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Seminar">
+                <h3 class="text-xl font-semibold mb-2">AP Seminar</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-seminar" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Performance Tasks</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Argumentation</h4>
+                        <div class="text-sm text-gray-600">
+                            • They Say/I Say Templates<br>
+                            • Purdue OWL - Argumentative Essays<br>
+                            • Logical Fallacy Database<br>
+                            • AP Seminar Discord Discussion<br>
+                            • Socratic Seminar Methods
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Presentation Skills</h4>
+                        <div class="text-sm text-gray-600">
+                            • TED Talk Analysis & Techniques<br>
+                            • Toastmasters International - Tips<br>
+                            • Canva - Presentation Design<br>
+                            • Previous PT Examples (College Board)<br>
+                            • Presentation Zen (Book)
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Research & Inquiry</h4>
+                        <div class="text-sm text-gray-600">
+                            • Question Formulation Technique<br>
+                            • mini-Qs (Document Analysis)<br>
+                            • Source Evaluation Frameworks<br>
+                            • Synthesis Matrix for Literature Review
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Spanish Language -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Spanish Language">
+                <h3 class="text-xl font-semibold mb-2">AP Spanish Language & Culture</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-spanish-language-and-culture" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Cultural Themes</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Spanish Media</h4>
+                        <div class="text-sm text-gray-600">
+                            • BBC Mundo - News in Spanish<br>
+                            • Radio Ambulante - Podcast Stories<br>
+                            • Dreaming Spanish - Comprehensible Input<br>
+                            • SpanishDict - Translation & Conjugation<br>
+                            • El País - Spanish Newspaper
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Practice & Community</h4>
+                        <div class="text-sm text-gray-600">
+                            • HelloTalk - Language Exchange<br>
+                            • r/Spanish - Reddit Community<br>
+                            • AP Spanish Discord - Conversation Practice<br>
+                            • Conjuguemos - Verb Drills<br>
+                            • Kwiziq - Spanish Grammar
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Literature & Culture</h4>
+                        <div class="text-sm text-gray-600">
+                            • Spanish & Latin American Literature Guides<br>
+                            • Cervantes Virtual Library<br>
+                            • Spanish Cinema - Classic & Modern<br>
+                            • CultureGrams - Spanish-Speaking Countries
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Spanish Literature -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Spanish Literature">
+                <h3 class="text-xl font-semibold mb-2">AP Spanish Literature & Culture</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-spanish-literature-and-culture" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Required Reading List</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Text Analysis</h4>
+                        <div class="text-sm text-gray-600">
+                            • Cervantes Virtual Library - Free Texts<br>
+                            • Así se dice - Literary Analysis Guide<br>
+                            • Quizlet - Literary Terms in Spanish<br>
+                            • AP Spanish Lit Discord Discussion<br>
+                            • Spanish Literature - Project Gutenberg
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Historical Context</h4>
+                        <div class="text-sm text-gray-600">
+                            • Spanish History Timeline Resources<br>
+                            • Latin American History Modules<br>
+                            • LitCharts - Spanish Literature Guides<br>
+                            • Podcasts on Hispanic Literary Movements<br>
+                            • Real Academia Española - Resources
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Critical Approaches</h4>
+                        <div class="text-sm text-gray-600">
+                            • Golden Age Literature Analysis<br>
+                            • Modernismo & Vanguardia Movements<br>
+                            • Contemporary Latin American Literature<br>
+                            • Sor Juana & Colonial Literature
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP Statistics -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="Statistics">
+                <h3 class="text-xl font-semibold mb-2">AP Statistics</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Khan Academy</h4>
+                        <a href="https://www.khanacademy.org/math/ap-statistics" target="_blank" class="text-sm text-blue-500 hover:underline">Full AP Statistics Course</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-statistics" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Formula Sheet</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Data Analysis Tools</h4>
+                        <div class="text-sm text-gray-600">
+                            • StatKey - Statistical Analysis Tool<br>
+                            • Rossmanchance - Applets & Activities<br>
+                            • TI-84 Calculator Tutorials<br>
+                            • R Programming (Advanced Students)<br>
+                            • StatCrunch - Data Analysis
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Video Lessons</h4>
+                        <div class="text-sm text-gray-600">
+                            • StatQuest - Statistics Clarified<br>
+                            • Professor Leonard - Stats Lectures<br>
+                            • AP Stats Discord - Problem Solving<br>
+                            • Previous FRQ Video Solutions<br>
+                            • Bozeman Science - AP Stats
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Practice & Review</h4>
+                        <div class="text-sm text-gray-600">
+                            • AP Stats Practice Exams (Multiple)<br>
+                            • Starnes & Yates Stats (Textbook)<br>
+                            • The Practice of Statistics (Companion)<br>
+                            • Stats Medic - Practice Questions<br>
+                            • Barron's AP Statistics Book
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP United States Government -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="US Government">
+                <h3 class="text-xl font-semibold mb-2">AP US Government & Politics</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-united-states-government-and-politics" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & SCOTUS Cases</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Current Events</h4>
+                        <div class="text-sm text-gray-600">
+                            • SCOTUSblog - Supreme Court News<br>
+                            • Politico - Congressional Coverage<br>
+                            • The White House - Executive Actions<br>
+                            • AP Gov Discord - Current Events Discussion<br>
+                            • Roll Call - Congress News
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Foundational Documents</h4>
+                        <div class="text-sm text-gray-600">
+                            • National Archives - Founding Docs<br>
+                            • Library of Congress - Primary Sources<br>
+                            • Khan Academy - US Government Course<br>
+                            • iCivics - Interactive Constitution<br>
+                            • Federalist Papers & Anti-Federalist Papers
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Practice & Analysis</h4>
+                        <div class="text-sm text-gray-600">
+                            • Khan Academy - AP Gov Course<br>
+                            • Fiveable - Gov Study Guides<br>
+                            • Previous FRQs with Scoring<br>
+                            • Barron's AP Government Book<br>
+                            • Comparison Charts for Institutions
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP United States History -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="US History">
+                <h3 class="text-xl font-semibold mb-2">AP United States History</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-united-states-history" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & DBQ/LEQ Rubrics</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Primary Sources</h4>
+                        <div class="text-sm text-gray-600">
+                            • DocsTeach - National Archives Activities<br>
+                            • Stanford History Education Group - Lessons<br>
+                            • Gilder Lehrman Institute - Resources<br>
+                            • APUSH Discord - Document Discussion<br>
+                            • Library of Congress - Digital Collections
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Video Resources</h4>
+                        <div class="text-sm text-gray-600">
+                            • Tom Richey - APUSH Specific Videos<br>
+                            • Adam Norris - Period Reviews<br>
+                            • Hip Hughes History - Key Concepts<br>
+                            • Khan Academy - US History Course<br>
+                            • Crash Course US History (Overview)
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Study Materials</h4>
+                        <div class="text-sm text-gray-600">
+                            • AMSCO APUSH Book (HighlY Recommended)<br>
+                            • Barron's AP US History<br>
+                            • Fiveable - APUSH Study Guides<br>
+                            • Periodization Charts & Timelines<br>
+                            • Key Concept Outlines (All Periods)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AP World History -->
+            <div class="resource-card bg-white rounded-xl card-shadow p-6" data-ap="World History">
+                <h3 class="text-xl font-semibold mb-2">AP World History: Modern</h3>
+                <div class="space-y-3">
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">College Board</h4>
+                        <a href="https://apstudents.collegeboard.org/courses/ap-world-history-modern" target="_blank" class="text-sm text-blue-500 hover:underline">Official Course & Thematic Learning</a>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Historical Thinking</h4>
+                        <div class="text-sm text-gray-600">
+                            • Heimler's History - AP World Specific<br>
+                            • Freemanpedia - Thematic Overviews<br>
+                            • World History Encyclopedia - Context<br>
+                            • AP World Discord - Periodization Help<br>
+                            • World History For Us All - Resources
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Comparison & Context</h4>
+                        <div class="text-sm text-gray-600">
+                            • World Population History - Interactive<br>
+                            • Big History Project - Broad Context<br>
+                            • Fiveable - Comparison Charts<br>
+                            • SPICE-T Chart Templates<br>
+                            • Themes & Key Concepts Review
+                        </div>
+                    </div>
+                    <div class="resource-category">
+                        <h4 class="font-medium text-blue-600">Document Analysis</h4>
+                        <div class="text-sm text-gray-600">
+                            • WHAP Primary Source Collections<br>
+                            • DBQ Document Analysis Framework<br>
+                            • LEQ Thesis Practice<br>
+                            • Ways of the World (Strayer) Companion<br>
+                            • Bentley & Ziegler Traditions & Encounters
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- No Results Message -->
+        <div id="noResults" class="hidden text-center py-12 fade-in-up">
+            <p class="text-gray-500 text-lg">No AP courses found matching your search.</p>
+            <p class="text-gray-400 text-sm mt-2">Try searching for a different AP course.</p>
+        </div>
+    </main>
+
+    <!-- Career Finder Section -->
+    <main id="careerSection" class="max-w-6xl mx-auto px-4 py-8 hidden">
+        <!-- Hero Section -->
+        <section class="hero-bg py-12">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span class="text-blue-500">Find Your</span> Career
+                </h1>
+                <p class="text-lg md:text-xl text-gray-600 mb-2">
+                    Discover careers that match your interests, values, and work style
+                </p>
+                <p class="text-sm text-gray-500">Take our quick quiz to get personalized recommendations</p>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="quizSection" class="mb-12 fade-in-up">
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <!-- Progress Bar -->
+                <div class="mb-6">
+                    <div class="flex justify-between text-sm text-gray-600 mb-2">
+                        <span>Question <span id="currentQuestionNum">1</span> of <span id="totalQuestions">15</span></span>
+                        <span id="progressPercent">7%</span>
+                        <span id="questionType" class="multi-select-hint"></span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div id="progressBar" class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: 7%"></div>
+                    </div>
+                </div>
+
+                <!-- Question Container -->
+                <div id="questionContainer">
+                    <h2 class="text-2xl font-semibold mb-4" id="questionText"></h2>
+                    <div id="answerChoices" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"></div>
+                    <div class="flex justify-end">
+                        <button id="nextQuestionBtn" class="btn-primary text-white px-6 py-2 rounded-lg font-medium hidden">
+                            Next Question
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results Container -->
+                <div id="resultsContainer" class="hidden">
+                    <h2 class="text-2xl font-semibold mb-4 text-center">Your Recommended Career Paths</h2>
+                    <div id="careerResults" class="space-y-4 mb-6"></div>
+                    <div class="text-center">
+                        <button id="retakeQuizBtn" class="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                            Retake Quiz
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="howQuizWorksSection" class="mb-12 fade-in-up">
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <h2 class="text-2xl font-semibold mb-4">How It Works</h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-blue-500 font-bold">1</span>
+                        </div>
+                        <h3 class="font-semibold mb-2">Answer Questions</h3>
+                        <p class="text-gray-600 text-sm">Respond to questions about your interests, values, and work preferences</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-green-500 font-bold">2</span>
+                        </div>
+                        <h3 class="font-semibold mb-2">We Analyze Your Responses</h3>
+                        <p class="text-gray-600 text-sm">Our algorithm matches your profile to career categories</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-amber-500 font-bold">3</span>
+                        </div>
+                        <h3 class="font-semibold mb-2">Get Personalized Results</h3>
+                        <p class="text-gray-600 text-sm">Receive career recommendations with detailed descriptions</p>
+                    </div>
+                </div>
+                <div class="mt-8 p-4 bg-blue-50 rounded-lg">
+                    <h3 class="font-semibold text-blue-800 mb-2">Quiz Tips</h3>
+                    <ul class="text-sm text-blue-700 space-y-1">
+                        <li>• Answer honestly for the best recommendations</li>
+                        <li>• Consider your long-term preferences, not just current mood</li>
+                        <li>• There are no right or wrong answers</li>
+                        <li>• You can retake the quiz anytime to explore different options</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Career Courses Section -->
+    <main id="careerCoursesSection" class="max-w-6xl mx-auto px-4 py-8 hidden">
+        <!-- Hero Section -->
+        <section class="hero-bg py-12">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span class="text-blue-500">Career</span> Courses
+                </h1>
+                <p class="text-lg md:text-xl text-gray-600 mb-2">
+                    Plan your high school courses for your dream career
+                </p>
+                <p class="text-sm text-gray-500">Get a personalized list of important courses based on your career goals</p>
+            </div>
+        </section>
+
+        <!-- Career Path Selection -->
+        <section id="careerPathSection" class="mb-12 fade-in-up">
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <h2 class="text-2xl font-semibold mb-6">Choose Your Path</h2>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Specific Job Path -->
+                    <div class="path-card bg-gray-50 rounded-lg p-6" id="specificJobCard">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-blue-500 font-bold">1</span>
+                            </div>
+                            <h3 class="text-xl font-semibold">Specific Job/Career</h3>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-4">Search for the exact job you want. This provides the most targeted course recommendations.</p>
+                        
+                        <div class="mb-4">
+                            <input 
+                                type="text" 
+                                id="jobSearchInput" 
+                                placeholder="e.g., Pediatric Nurse, Software Engineer, Graphic Designer..."
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                                disabled
+                            >
+                            <div id="jobSearchResults" class="mt-2 max-h-40 overflow-y-auto hidden"></div>
+                        </div>
+                        
+                        <div class="text-xs text-blue-600 bg-blue-50 p-2 rounded">
+                            💡 <strong>Best Choice:</strong> Selecting a specific job gives you the most accurate course recommendations and prerequisites.
+                        </div>
+                    </div>
+
+                    <!-- Field Path -->
+                    <div class="path-card bg-gray-50 rounded-lg p-6" id="fieldJobCard">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-amber-500 font-bold">2</span>
+                            </div>
+                            <h3 class="text-xl font-semibold">Field/Industry</h3>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-4">Choose a broader career field if you're not sure about the specific job yet.</p>
+                        
+                        <div class="mb-4">
+                            <select id="fieldSelect" class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none" disabled>
+                                <option value="">-- Select a Field --</option>
+                            </select>
+                        </div>
+                        
+                        <div class="text-xs text-amber-600 bg-amber-50 p-2 rounded">
+                            ⚠️ <strong>Broader Results:</strong> Field selection provides general recommendations that may need customization.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <button id="generateCareerPlanBtn" class="btn-primary text-white px-8 py-3 rounded-lg font-medium disabled:opacity-50" disabled>
+                        Generate Important Courses to Take
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Career Plan Results -->
+        <section id="careerPlanResults" class="mb-12 fade-in-up hidden">
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-semibold">Your Important Courses</h2>
+                    <div class="flex gap-2">
+                        <button id="copyCareerPlanBtn" class="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-200 transition-colors">Copy</button>
+                        <button id="printCareerPlanBtn" class="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-200 transition-colors">Print</button>
+                    </div>
+                </div>
+
+                <div id="selectedCareerInfo" class="bg-blue-50 rounded-lg p-4 mb-6"></div>
+
+                <div id="fourYearPlan" class="space-y-6"></div>
+
+                <div class="mt-8 p-4 bg-amber-50 rounded-lg">
+                    <h3 class="font-semibold text-amber-800 mb-2">Important Notes</h3>
+                    <ul class="text-sm text-amber-700 space-y-1">
+                        <li>• This plan focuses on career-relevant courses; you'll also need state graduation requirements</li>
+                        <li>• Talk to your counselor to ensure you meet all prerequisites and graduation plans</li>
+                        <li>• Some courses may require application or have limited availability</li>
+                        <li>• Consider dual credit options at Lone Star College for weighted GPA boost</li>
+                        <li>• Extracurriculars and volunteer work are crucial for college applications</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="howCareerCoursesWorksSection" class="mb-12 fade-in-up">
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <h2 class="text-2xl font-semibold mb-4">How It Works</h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-blue-500 font-bold">1</span>
+                        </div>
+                        <h3 class="font-semibold mb-2">Choose Your Career</h3>
+                        <p class="text-gray-600 text-sm">Search for a specific job or select a career field that interests you</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-green-500 font-bold">2</span>
+                        </div>
+                        <h3 class="font-semibold mb-2">We Analyze Requirements</h3>
+                        <p class="text-gray-600 text-sm">Our system identifies required courses, prerequisites, and recommended electives</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-amber-500 font-bold">3</span>
+                        </div>
+                        <h3 class="font-semibold mb-2">Get Your 4-Year Plan</h3>
+                        <p class="text-gray-600 text-sm">Receive a balanced schedule that builds your skills year by year</p>
+                    </div>
+                </div>
+                <div class="mt-8 p-4 bg-blue-50 rounded-lg">
+                    <h3 class="font-semibold text-blue-800 mb-2">Tips for Success</h3>
+                    <ul class="text-sm text-blue-700 space-y-1">
+                        <li>• Start career planning early - freshman year is ideal</li>
+                        <li>• Prioritize prerequisites for advanced courses</li>
+                        <li>• Balance rigorous courses with your mental health</li>
+                        <li>• Consider summer courses to lighten your load</li>
+                        <li>• Join career-related clubs (HOSA, DECA, Robotics, etc.)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-100 py-6">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <p class="text-sm text-gray-600">
+                © 2025 KatyPlan. No login. Nothing saved.
+                <a href="privacy.html" class="text-blue-500 hover:text-blue-600">Privacy Policy</a>
+            </p>
+        </div>
+    </footer>
+   
+    <!-- Load Main JavaScript -->
+    <script src="main.js"></script>
+   
+</body>
+</html>
