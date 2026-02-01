@@ -1101,7 +1101,7 @@ flattenCoursePlan(coursePlan) {
   // 2) Otherwise resolve via field
   for (const [fieldKey, field] of Object.entries(this.careerCoursesDatabase.fields || {})) {
     if ((field.jobs || []).includes(job)) {
-      const raw = flatten(this.getFieldCoursePlan(fieldKey, job));
+      const raw = flatten(getFieldCoursePlan(fieldKey, job));
       return { importantCourses: this.sanitizeImportantCourses(raw, fieldKey) };
     }
   }
@@ -1114,30 +1114,25 @@ flattenCoursePlan(coursePlan) {
   };
 }
 
-function getFieldCoursePlan(fieldKey, job) {
+getFieldCoursePlan(fieldKey, job) {
   switch (fieldKey) {
     case "Healthcare":
       return { importantCourses: ["AP Biology", "AP Chemistry", "AP Physics 1", "AP Psychology", "AP Statistics", "AP Calculus AB", "Medical Terminology", "Anatomy & Physiology", "Health Science Theory", "Health Science Clinical", "Practicum in Health Science", "AP Research"] };
-
     case "Engineering":
       return { importantCourses: ["Algebra 2", "Pre-Calculus", "AP Pre-Calculus", "AP Calculus AB", "AP Calculus BC", "AP Physics 1", "AP Physics C", "AP Chemistry", "AP Computer Science A", "AP Statistics", "Principles of Engineering", "Engineering Design", "AP Research"] };
-
     case "Business":
       return { importantCourses: ["Principles of Business", "Business Law", "Marketing", "AP English Language", "AP Statistics", "AP Macroeconomics", "AP Microeconomics", "AP Computer Science Principles", "AP Research", "Practicum in Business Management"] };
-
     case "Creative":
       return { importantCourses: ["AP English Language", "AP English Literature", "AP Studio Art", "Theater Arts", "Web Design", "Marketing", "AP Research"] };
-
     case "Education":
       return { importantCourses: ["AP English Language", "AP English Literature", "AP Psychology", "AP US History", "AP US Government", "AP Statistics", "AP Research", "Practicum in Education", "Debate"] };
-
     case "Science":
       return { importantCourses: ["AP Biology", "AP Chemistry", "AP Physics 1", "AP Physics C", "AP Calculus AB", "AP Calculus BC", "AP Statistics", "AP Environmental Science", "AP Research"] };
-
     default:
       return { importantCourses: [] };
   }
 }
+
 
   getPlannedGradeNumber(plan, courseName) { const map = { freshman: 9, sophomore: 10, junior: 11, senior: 12 }; for (const [yearKey, yearData] of Object.entries(plan)) { if (yearData.fall.includes(courseName) || yearData.spring.includes(courseName)) return map[yearKey]; } return null; }
   canPlaceCourseInYear(plan, course, courseName, yearNumber) { const allowed = Array.isArray(course.allowedGrades) ? course.allowedGrades : [9, 10, 11, 12]; if (!allowed.includes(yearNumber)) return false; for (const prereq of (course.prerequisites || [])) { const prereqYear = this.getPlannedGradeNumber(plan, prereq); if (prereqYear === null) return false; if (prereqYear >= yearNumber) return false; } return true; }
