@@ -1114,25 +1114,25 @@ flattenCoursePlan(coursePlan) {
   };
 }
 
-getFieldCoursePlan(fieldKey, job) {
+function getFieldCoursePlan(fieldKey, job) {
   switch (fieldKey) {
     case "Healthcare":
-      return { importantCourses: ["Pre-AP Biology", "Pre-AP Chemistry", "AP Biology", "AP Chemistry", "AP Physics 1", "AP Psychology", "AP Statistics", "AP Calculus AB", "Medical Terminology", "Anatomy & Physiology", "Health Science Theory", "Health Science Clinical", "Practicum in Health Science", "AP Research"] };
+      return { importantCourses: ["AP Biology", "AP Chemistry", "AP Physics 1", "AP Psychology", "AP Statistics", "AP Calculus AB", "Medical Terminology", "Anatomy & Physiology", "Health Science Theory", "Health Science Clinical", "Practicum in Health Science", "AP Research"] };
 
     case "Engineering":
-      return { importantCourses: ["Algebra 2", "Pre-Calculus", "AP Calculus AB", "AP Calculus BC", "AP Physics 1", "AP Physics C", "AP Chemistry", "AP Computer Science A", "AP Statistics", "Introduction to Engineering Design", "Principles of Engineering", "Digital Electronics", "Engineering Design and Development", "AP Research"] };
+      return { importantCourses: ["Algebra 2", "Pre-Calculus", "AP Pre-Calculus", "AP Calculus AB", "AP Calculus BC", "AP Physics 1", "AP Physics C", "AP Chemistry", "AP Computer Science A", "AP Statistics", "Principles of Engineering", "Engineering Design", "AP Research"] };
 
     case "Business":
-      return { importantCourses: ["Principles of Business", "Business Information Management", "Business Law", "Marketing", "AP English Language", "AP Statistics", "AP Macroeconomics", "AP Microeconomics", "AP Computer Science Principles", "AP Research", "Practicum in Business Management"] };
+      return { importantCourses: ["Principles of Business", "Business Law", "Marketing", "AP English Language", "AP Statistics", "AP Macroeconomics", "AP Microeconomics", "AP Computer Science Principles", "AP Research", "Practicum in Business Management"] };
 
     case "Creative":
-      return { importantCourses: ["Graphic Design", "Content Creation", "Journalism", "AP English Language", "AP English Literature", "Creative Writing", "AP Studio Art", "Theater Arts", "Business Information Management", "AP Research"] };
+      return { importantCourses: ["AP English Language", "AP English Literature", "AP Studio Art", "Theater Arts", "Web Design", "Marketing", "AP Research"] };
 
     case "Education":
-      return { importantCourses: ["AP English Language", "AP English Literature", "AP Psychology", "AP US History", "AP US Government", "AP Statistics", "AP Research", "Practicum in Education", "Debate", "Speech"] };
+      return { importantCourses: ["AP English Language", "AP English Literature", "AP Psychology", "AP US History", "AP US Government", "AP Statistics", "AP Research", "Practicum in Education", "Debate"] };
 
     case "Science":
-      return { importantCourses: ["Pre-AP Biology", "Pre-AP Chemistry", "AP Biology", "AP Chemistry", "AP Physics 1", "AP Physics C", "AP Calculus AB", "AP Calculus BC", "AP Statistics", "AP Environmental Science", "Research", "AP Research"] };
+      return { importantCourses: ["AP Biology", "AP Chemistry", "AP Physics 1", "AP Physics C", "AP Calculus AB", "AP Calculus BC", "AP Statistics", "AP Environmental Science", "AP Research"] };
 
     default:
       return { importantCourses: [] };
@@ -1170,14 +1170,13 @@ getFieldCoursePlan(fieldKey, job) {
     };
 
     const creditSystem = {
-      'Regular': 1,
-      'Pre-AP': 1.2,
-      'AP': 1.5,
-      'CTE': 1,
-      'Elective': 0.8,
-      'Language': 1,
-      'PE': 0.5
-    };
+  'Regular': 1,
+  'AP': 1.5,
+  'CTE': 1,
+  'Elective': 0.8,
+  'Language': 1,
+  'PE': 0.5
+};
 
     // Distribute courses by year
     sortedCourses.forEach(([courseName, course]) => {
