@@ -370,11 +370,9 @@ class KatyPlan {
         // SCIENCE
         // ----------------------------
         "Biology 1": { name: "Biology 1", type: "Regular", typicalYear: 9, allowedGrades: [9, 10], prerequisites: [], difficulty: 2, category: "Science", description: "Introduction to cellular biology, genetics, and ecology" },
-        "Pre-AP Biology": { name: "Pre-AP Biology", type: "Pre-AP", typicalYear: 9, allowedGrades: [9, 10], prerequisites: [], difficulty: 3, category: "Science", description: "Advanced biology with lab focus" },
         "AP Biology": { name: "AP Biology", type: "AP", typicalYear: 11, allowedGrades: [11, 12], prerequisites: ["Biology 1"], difficulty: 5, category: "Science", description: "College-level biology with lab" },
 
         "Chemistry 1": { name: "Chemistry 1", type: "Regular", typicalYear: 10, allowedGrades: [10, 11], prerequisites: ["Algebra 1"], difficulty: 3, category: "Science", description: "Introduction to chemical principles" },
-        "Pre-AP Chemistry": { name: "Pre-AP Chemistry", type: "Pre-AP", typicalYear: 10, allowedGrades: [10, 11], prerequisites: ["Algebra 1"], difficulty: 4, category: "Science", description: "Advanced chemistry preparation" },
         "AP Chemistry": { name: "AP Chemistry", type: "AP", typicalYear: 11, allowedGrades: [11, 12], prerequisites: ["Chemistry 1", "Algebra 2"], difficulty: 5, category: "Science", description: "College-level chemistry" },
 
         "Physics 1": { name: "Physics 1", type: "Regular", typicalYear: 11, allowedGrades: [11, 12], prerequisites: ["Algebra 2"], difficulty: 3, category: "Science", description: "Algebra-based physics" },
@@ -406,11 +404,8 @@ class KatyPlan {
         // ----------------------------
         "English 1": { name: "English 1", type: "Regular", typicalYear: 9, allowedGrades: [9], prerequisites: [], difficulty: 2, category: "English", description: "Literature and composition fundamentals" },
         "English 2": { name: "English 2", type: "Regular", typicalYear: 10, allowedGrades: [10], prerequisites: ["English 1"], difficulty: 2, category: "English", description: "Advanced literature analysis" },
-        "Pre-AP English 2": { name: "Pre-AP English 2", type: "Pre-AP", typicalYear: 10, allowedGrades: [10], prerequisites: ["English 1"], difficulty: 3, category: "English", description: "Pre-AP literature and writing" },
         "AP English Language": { name: "AP English Language", type: "AP", typicalYear: 11, allowedGrades: [11], prerequisites: ["English 2"], difficulty: 4, category: "English", description: "Rhetoric and argumentation" },
         "AP English Literature": { name: "AP English Literature", type: "AP", typicalYear: 12, allowedGrades: [12], prerequisites: ["AP English Language"], difficulty: 5, category: "English", description: "College-level literature analysis" },
-        "Creative Writing": { name: "Creative Writing", type: "Elective", typicalYear: 11, allowedGrades: [11, 12], prerequisites: ["English 2"], difficulty: 2, category: "English", description: "Fiction and non-fiction writing" },
-        "Journalism": { name: "Journalism", type: "Elective", typicalYear: 11, allowedGrades: [10, 11, 12], prerequisites: ["English 1"], difficulty: 2, category: "English", description: "News writing, reporting, and media" },
 
         // ----------------------------
         // SOCIAL STUDIES
@@ -453,19 +448,13 @@ class KatyPlan {
         // ----------------------------
         // CTE - ENGINEERING
         // ----------------------------
-        "Introduction to Engineering Design": { name: "Introduction to Engineering Design", type: "CTE", typicalYear: 9, allowedGrades: [9, 10], prerequisites: [], difficulty: 2, category: "Engineering", description: "Engineering design process" },
         "Principles of Engineering": { name: "Principles of Engineering", type: "CTE", typicalYear: 10, allowedGrades: [10, 11], prerequisites: ["Algebra 1"], difficulty: 3, category: "Engineering", description: "Core engineering principles" },
-        "Digital Electronics": { name: "Digital Electronics", type: "CTE", typicalYear: 11, allowedGrades: [11, 12], prerequisites: ["Geometry"], difficulty: 4, category: "Engineering", description: "Digital circuit design" },
-        "Engineering Design and Development": { name: "Engineering Design and Development", type: "CTE", typicalYear: 12, allowedGrades: [12], prerequisites: ["Digital Electronics"], difficulty: 5, category: "Engineering", description: "Capstone engineering project" },
-
         "Engineering Design": { name: "Engineering Design", type: "CTE", typicalYear: 10, allowedGrades: [9, 10, 11, 12], prerequisites: [], difficulty: 2, category: "Engineering", description: "Design-focused engineering elective (general)" },
-        "Practicum in Trades": { name: "Practicum in Trades", type: "CTE", typicalYear: 12, allowedGrades: [12], prerequisites: [], difficulty: 4, category: "Trades", description: "Hands-on practicum experience (CTE)" },
 
         // ----------------------------
         // CTE - BUSINESS
         // ----------------------------
         "Principles of Business": { name: "Principles of Business", type: "CTE", typicalYear: 9, allowedGrades: [9, 10], prerequisites: [], difficulty: 2, category: "Business", description: "Business fundamentals" },
-        "Business Information Management": { name: "Business Information Management", type: "CTE", typicalYear: 10, allowedGrades: [10, 11, 12], prerequisites: ["Principles of Business"], difficulty: 3, category: "Business", description: "Business technology and management" },
         "Business Law": { name: "Business Law", type: "CTE", typicalYear: 11, allowedGrades: [11, 12], prerequisites: ["Principles of Business"], difficulty: 3, category: "Business", description: "Legal aspects of business" },
         "Practicum in Business Management": { name: "Practicum in Business Management", type: "CTE", typicalYear: 12, allowedGrades: [12], prerequisites: ["Business Information Management"], difficulty: 4, category: "Business", description: "Professional business experience" },
 
@@ -485,10 +474,7 @@ class KatyPlan {
         // ----------------------------
         // CTE - AGRICULTURE
         // ----------------------------
-        "Principles of Agriculture": { name: "Principles of Agriculture", type: "CTE", typicalYear: 9, allowedGrades: [9, 10], prerequisites: [], difficulty: 2, category: "Agriculture", description: "Introduction to agriculture" },
         "Animal Science": { name: "Animal Science", type: "CTE", typicalYear: 10, allowedGrades: [10, 11, 12], prerequisites: ["Biology 1"], difficulty: 3, category: "Agriculture", description: "Livestock and animal care" },
-        "Veterinary Medical Applications": { name: "Veterinary Medical Applications", type: "CTE", typicalYear: 11, allowedGrades: [11, 12], prerequisites: ["Animal Science"], difficulty: 4, category: "Agriculture", description: "Veterinary science fundamentals" },
-        "Practicum in Agriculture": { name: "Practicum in Agriculture", type: "CTE", typicalYear: 12, allowedGrades: [12], prerequisites: ["Veterinary Medical Applications"], difficulty: 4, category: "Agriculture", description: "Professional agriculture experience" },
 
         // ----------------------------
         // FINE ARTS
@@ -498,9 +484,6 @@ class KatyPlan {
         "Band": { name: "Band", type: "Elective", typicalYear: 9, allowedGrades: [9, 10, 11, 12], prerequisites: [], difficulty: 2, category: "Fine Arts", description: "Instrumental music performance" },
         "Choir": { name: "Choir", type: "Elective", typicalYear: 9, allowedGrades: [9, 10, 11, 12], prerequisites: [], difficulty: 2, category: "Fine Arts", description: "Vocal music performance" },
         "Theater Arts": { name: "Theater Arts", type: "Elective", typicalYear: 9, allowedGrades: [9, 10, 11, 12], prerequisites: [], difficulty: 2, category: "Fine Arts", description: "Acting and stage production" },
-
-        "Graphic Design": { name: "Graphic Design", type: "CTE", typicalYear: 10, allowedGrades: [9, 10, 11, 12], prerequisites: [], difficulty: 3, category: "Fine Arts", description: "Digital design principles and tools" },
-        "Content Creation": { name: "Content Creation", type: "CTE", typicalYear: 11, allowedGrades: [10, 11, 12], prerequisites: [], difficulty: 3, category: "Fine Arts", description: "Video, social content, and media production" },
 
         // ----------------------------
         // LANGUAGES
@@ -524,7 +507,6 @@ class KatyPlan {
         // ----------------------------
         // RESEARCH / CAPSTONE (referenced in jobCourses)
         // ----------------------------
-        "Research": { name: "Research", type: "Elective", typicalYear: 11, allowedGrades: [11, 12], prerequisites: [], difficulty: 3, category: "Elective", description: "Independent research skills and projects" },
         "AP Research": { name: "AP Research", type: "AP", typicalYear: 12, allowedGrades: [12], prerequisites: ["AP English Language"], difficulty: 5, category: "Elective", description: "AP Capstone research course (advanced)" },
 
         // ----------------------------
@@ -543,32 +525,32 @@ jobCourses: {
     electives: ["Statistics", "AP Statistics", "Practicum in Health Science"]
   },
   "Doctor": {
-    required: ["Biology 1", "Pre-AP Biology", "Chemistry 1", "Pre-AP Chemistry", "Physics 1", "Anatomy & Physiology", "AP Biology", "AP Chemistry"],
+    required: ["Biology 1", "Chemistry 1", "Physics 1", "Anatomy & Physiology", "AP Biology", "AP Chemistry"],
     recommended: ["AP Physics 1", "AP Calculus AB", "AP Statistics", "AP Psychology", "Medical Terminology"],
-    electives: ["AP Spanish Language", "Research", "AP Research", "Practicum in Health Science"]
+    electives: ["AP Spanish Language", "AP Research", "Practicum in Health Science"]
   },
   "Anesthesiologist": {
-    required: ["Biology 1", "Pre-AP Biology", "Chemistry 1", "Pre-AP Chemistry", "Physics 1", "Anatomy & Physiology", "Medical Terminology", "Health Science Theory", "Health Science Clinical"],
+    required: ["Biology 1", "Chemistry 1", "Physics 1", "Anatomy & Physiology", "Medical Terminology", "Health Science Theory", "Health Science Clinical"],
     recommended: ["AP Biology", "AP Chemistry", "AP Physics 1", "AP Psychology", "AP Statistics", "AP Calculus AB"],
     electives: ["Practicum in Health Science", "AP Spanish Language"]
   },
   "Neurosurgeon": {
-    required: ["Biology 1", "Pre-AP Biology", "Chemistry 1", "Pre-AP Chemistry", "Physics 1", "Anatomy & Physiology", "Medical Terminology", "Health Science Theory", "Health Science Clinical"],
+    required: ["Biology 1", "Chemistry 1", "Physics 1", "Anatomy & Physiology", "Medical Terminology", "Health Science Theory", "Health Science Clinical"],
     recommended: ["AP Biology", "AP Chemistry", "AP Physics 1", "AP Statistics", "AP Calculus AB", "AP Psychology"],
     electives: ["Practicum in Health Science", "AP Spanish Language", "AP Research"]
   },
   "Orthopedic Surgeon": {
-    required: ["Biology 1", "Pre-AP Biology", "Chemistry 1", "Pre-AP Chemistry", "Physics 1", "Anatomy & Physiology", "Medical Terminology", "Health Science Theory", "Health Science Clinical"],
+    required: ["Biology 1", "Chemistry 1", "Physics 1", "Anatomy & Physiology", "Medical Terminology", "Health Science Theory", "Health Science Clinical"],
     recommended: ["AP Biology", "AP Chemistry", "AP Physics 1", "AP Statistics", "AP Calculus AB"],
     electives: ["Athletics", "Practicum in Health Science", "AP Spanish Language"]
   },
   "Cardiologist": {
-    required: ["Biology 1", "Pre-AP Biology", "Chemistry 1", "Pre-AP Chemistry", "Physics 1", "Anatomy & Physiology", "Medical Terminology"],
+    required: ["Biology 1", "Chemistry 1", "Physics 1", "Anatomy & Physiology", "Medical Terminology"],
     recommended: ["AP Biology", "AP Chemistry", "AP Physics 1", "AP Statistics", "AP Calculus AB"],
     electives: ["Practicum in Health Science", "AP Spanish Language"]
   },
   "General Surgeon": {
-    required: ["Biology 1", "Pre-AP Biology", "Chemistry 1", "Pre-AP Chemistry", "Physics 1", "Anatomy & Physiology", "Medical Terminology"],
+    required: ["Biology 1", "Chemistry 1", "Physics 1", "Anatomy & Physiology", "Medical Terminology"],
     recommended: ["AP Biology", "AP Chemistry", "AP Physics 1", "AP Psychology", "AP Statistics"],
     electives: ["Practicum in Health Science", "AP Spanish Language"]
   },
@@ -608,9 +590,9 @@ jobCourses: {
     electives: ["Spanish 2", "AP Spanish Language", "Athletics", "Health Science Theory"]
   },
   "Pharmacist": {
-    required: ["Biology 1", "Chemistry 1", "Pre-AP Chemistry", "AP Chemistry", "AP Biology", "AP Calculus AB"],
+    required: ["Biology 1", "Chemistry 1", "AP Chemistry", "AP Biology", "AP Calculus AB"],
     recommended: ["AP Physics 1", "AP Statistics", "Medical Terminology", "AP Psychology"],
-    electives: ["Business Information Management", "AP Spanish Language", "Research"]
+    electives: ["AP Spanish Language"]
   },
   "Dentist": {
     required: ["Biology 1", "Chemistry 1", "AP Biology", "AP Chemistry", "AP Calculus AB", "Anatomy & Physiology"],
@@ -618,36 +600,36 @@ jobCourses: {
     electives: ["AP Spanish Language", "Business Law", "Practicum in Health Science"]
   },
   "Medical Researcher": {
-    required: ["Biology 1", "Pre-AP Biology", "Chemistry 1", "Pre-AP Chemistry", "AP Biology", "AP Chemistry", "AP Statistics"],
+    required: ["Biology 1", "Chemistry 1", "AP Biology", "AP Chemistry", "AP Statistics"],
     recommended: ["AP Physics C", "AP Calculus BC", "AP Psychology", "AP Research"],
     electives: ["AP Spanish Language", "Computer Science 1", "AP Computer Science A"]
   },
   "Physician Assistant": {
     required: ["Biology 1", "Chemistry 1", "Anatomy & Physiology", "Medical Terminology", "AP Biology", "AP Psychology"],
     recommended: ["AP Chemistry", "AP Statistics", "Spanish 3", "Health Science Clinical"],
-    electives: ["AP Spanish Language", "Practicum in Health Science", "Research"]
+    electives: ["AP Spanish Language", "Practicum in Health Science"]
   },
   "Occupational Therapist": {
     required: ["Biology 1", "Psychology", "AP Psychology", "Anatomy & Physiology", "Medical Terminology"],
     recommended: ["AP Biology", "AP Statistics", "Spanish 2", "Health Science Theory"],
-    electives: ["AP Spanish Language", "Creative Writing", "Practicum in Health Science"]
+    electives: ["AP Spanish Language", "Practicum in Health Science"]
   },
 
   // Engineering & Technology
   "Software Engineer": {
     required: ["Computer Science 1", "AP Computer Science A", "AP Computer Science Principles", "AP Calculus AB", "AP Statistics"],
     recommended: ["AP Physics 1", "AP Physics C", "Cybersecurity", "AP Calculus BC"],
-    electives: ["Practicum in Information Technology", "Digital Electronics", "AP Research", "Spanish 2"]
+    electives: ["Practicum in Information Technology", "AP Research", "Spanish 2"]
   },
   "Data Scientist": {
     required: ["Computer Science 1", "AP Computer Science A", "AP Statistics", "AP Calculus AB", "AP Calculus BC"],
     recommended: ["AP Physics C", "AP Economics", "AP Psychology", "AP Research"],
-    electives: ["Practicum in Information Technology", "Business Information Management", "AP Spanish Language"]
+    electives: ["Practicum in Information Technology", "AP Spanish Language"]
   },
   "Mechanical Engineer": {
     required: ["Calculus", "AP Calculus AB", "Physics 1", "AP Physics 1", "Chemistry 1", "AP Chemistry"],
-    recommended: ["AP Physics C", "AP Calculus BC", "Digital Electronics", "Pre-Calculus", "AP Pre-Calculus"],
-    electives: ["Introduction to Engineering Design", "Principles of Engineering", "AP Statistics", "Computer Science 1"]
+    recommended: ["AP Physics C", "AP Calculus BC", "Pre-Calculus", "AP Pre-Calculus"],
+    electives: ["Principles of Engineering", "AP Statistics", "Computer Science 1", "Engineering Design"]
   },
   "Biomedical Engineer": {
     required: ["Biology 1", "AP Biology", "Chemistry 1", "AP Chemistry", "AP Calculus AB", "AP Physics 1"],
@@ -656,81 +638,81 @@ jobCourses: {
   },
   "Aerospace Engineer": {
     required: ["Physics 1", "AP Physics 1", "AP Physics C", "Calculus", "AP Calculus BC", "Chemistry 1"],
-    recommended: ["AP Chemistry", "AP Statistics", "AP Computer Science A", "Digital Electronics"],
-    electives: ["Engineering Design and Development", "AP Research", "AP Spanish Language"]
+    recommended: ["AP Chemistry", "AP Statistics", "AP Computer Science A"],
+    electives: ["Engineering Design", "AP Research", "AP Spanish Language"]
   },
   "IT Manager": {
-    required: ["Computer Science 1", "AP Computer Science A", "AP Computer Science Principles", "Business Information Management"],
-    recommended: ["Cybersecurity", "AP Statistics", "AP Economics", "Digital Electronics"],
+    required: ["Computer Science 1", "AP Computer Science A", "AP Computer Science Principles"],
+    recommended: ["Cybersecurity", "AP Statistics", "AP Economics"],
     electives: ["Practicum in Information Technology", "Practicum in Business Management", "AP Spanish Language"]
   },
 
   // Business
   "Financial Analyst": {
-    required: ["AP Calculus AB", "AP Calculus BC", "AP Statistics", "AP Economics", "Business Information Management"],
+    required: ["AP Calculus AB", "AP Calculus BC", "AP Statistics", "AP Economics"],
     recommended: ["AP Macroeconomics", "AP Microeconomics", "Business Law", "AP Psychology"],
     electives: ["Practicum in Business Management", "AP Computer Science A", "AP Spanish Language"]
   },
   "Marketing Manager": {
-    required: ["AP Statistics", "AP Psychology", "Business Information Management", "AP Economics"],
-    recommended: ["AP English Language", "Graphic Design", "Creative Writing", "Business Law"],
-    electives: ["Practicum in Business Management", "AP Studio Art", "AP Spanish Language", "Content Creation"]
+    required: ["AP Statistics", "AP Psychology", "AP Economics"],
+    recommended: ["AP English Language", "Business Law"],
+    electives: ["Practicum in Business Management", "AP Studio Art", "AP Spanish Language", "Marketing"]
   },
   "Accountant": {
-    required: ["AP Calculus AB", "AP Statistics", "Business Information Management", "AP Economics", "Business Law"],
+    required: ["AP Calculus AB", "AP Statistics", "AP Economics", "Business Law"],
     recommended: ["AP Macroeconomics", "AP Microeconomics", "AP Computer Science A", "AP Psychology"],
     electives: ["Practicum in Business Management", "AP Spanish Language", "AP Research"]
   },
   "Entrepreneur": {
-    required: ["AP Economics", "Business Information Management", "Business Law", "AP Statistics"],
+    required: ["AP Economics", "Business Law", "AP Statistics"],
     recommended: ["AP Calculus AB", "AP Psychology", "AP English Language", "AP Computer Science Principles"],
-    electives: ["Practicum in Business Management", "Graphic Design", "AP Spanish Language", "Marketing"]
+    electives: ["Practicum in Business Management", "AP Spanish Language", "Marketing"]
   },
 
   // Creative
   "Graphic Designer": {
-    required: ["Art 1", "AP Studio Art", "Graphic Design", "Computer Science 1"],
-    recommended: ["AP Computer Science Principles", "AP English Literature", "Creative Writing", "Business Information Management"],
+    required: ["Art 1", "AP Studio Art", "Computer Science 1"],
+    recommended: ["AP Computer Science Principles", "AP English Literature"],
     electives: ["AP Spanish Language", "Theater Arts", "Web Design", "Marketing"]
   },
   "UX Designer": {
     required: ["Computer Science 1", "AP Computer Science Principles", "Art 1", "AP Statistics", "AP Psychology"],
-    recommended: ["AP Computer Science A", "AP Studio Art", "AP English Language", "Business Information Management"],
-    electives: ["Practicum in Information Technology", "Graphic Design", "AP Spanish Language", "AP Research"]
+    recommended: ["AP Computer Science A", "AP Studio Art", "AP English Language"],
+    electives: ["Practicum in Information Technology", "AP Spanish Language", "AP Research"]
   },
   "Content Creator": {
     required: ["English 1", "English 2", "AP English Language", "Computer Science 1", "AP Computer Science Principles"],
-    recommended: ["AP English Literature", "Creative Writing", "Graphic Design", "AP Statistics", "Business Information Management"],
+    recommended: ["AP English Literature", "AP Statistics"],
     electives: ["Theater Arts", "AP Studio Art", "AP Spanish Language", "Marketing"]
   },
   "Writer/Author": {
-    required: ["English 1", "English 2", "AP English Language", "AP English Literature", "Creative Writing"],
+    required: ["English 1", "English 2", "AP English Language", "AP English Literature"],
     recommended: ["AP Psychology", "AP Research", "AP Spanish Language", "AP World History"],
-    electives: ["Theater Arts", "Journalism", "Graphic Design", "AP Studio Art"]
+    electives: ["Theater Arts", "AP Studio Art"]
   },
 
   // Education
   "Teacher": {
-    required: ["AP English Language", "AP Psychology", "AP US History", "AP Government"],
-    recommended: ["AP English Literature", "AP Statistics", "AP Spanish Language", "Creative Writing"],
+    required: ["AP English Language", "AP Psychology", "AP US History"],
+    recommended: ["AP English Literature", "AP Statistics", "AP Spanish Language"],
     electives: ["Theater Arts", "AP Research", "Practicum in Education", "AP Human Geography"]
   },
   "School Counselor": {
-    required: ["AP Psychology", "AP Statistics", "AP English Language", "AP Government"],
+    required: ["AP Psychology", "AP Statistics", "AP English Language"],
     recommended: ["AP Sociology", "AP Human Geography", "AP Biology", "AP Research"],
-    electives: ["Spanish 3", "AP Spanish Language", "Practicum in Education", "Creative Writing"]
+    electives: ["Spanish 3", "AP Spanish Language", "Practicum in Education"]
   },
 
   // Trades
   "Electrician": {
     required: ["Algebra 1", "Geometry", "Algebra 2", "Physics 1"],
-    recommended: ["AP Physics 1", "AP Calculus AB", "Digital Electronics", "Business Information Management"],
-    electives: ["Practicum in Trades", "Engineering Design", "AP Computer Science Principles"]
+    recommended: ["AP Physics 1", "AP Calculus AB"],
+    electives: ["Engineering Design", "AP Computer Science Principles"]
   },
   "Carpenter": {
-    required: ["Algebra 1", "Geometry", "Algebra 2", "Business Information Management"],
+    required: ["Algebra 1", "Geometry", "Algebra 2"],
     recommended: ["AP Calculus AB", "Physics 1", "AP Physics 1", "Engineering Design"],
-    electives: ["Practicum in Trades", "Art 1", "AP Studio Art", "Business Law"]
+    electives: ["Art 1", "AP Studio Art", "Business Law"]
   },
 
   // Default fallback for unmatched jobs
